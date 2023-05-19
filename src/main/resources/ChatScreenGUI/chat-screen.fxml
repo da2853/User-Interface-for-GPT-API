@@ -26,8 +26,8 @@
             </buttons>
         </ButtonBar>
         <!-- set editable to false -->
-        <TextArea layoutX="15.0" layoutY="67.0" prefHeight="437.0" prefWidth="773.0" editable="false"/>
-        <TextField layoutX="23.0" layoutY="529.0" prefHeight="36.0" prefWidth="684.0" />
+        <TextArea fx:id="chatArea" layoutX="15.0" layoutY="67.0" prefHeight="437.0" prefWidth="773.0" editable="false"/>
+        <TextArea fx:id="userText" layoutX="23.0" layoutY="529.0" prefHeight="36.0" prefWidth="684.0" />
         <Button fx:id="sendButton" layoutX="715.0" layoutY="528.0" mnemonicParsing="false" onAction="#sendMessage" text="Send" />
     </children>
 </AnchorPane>

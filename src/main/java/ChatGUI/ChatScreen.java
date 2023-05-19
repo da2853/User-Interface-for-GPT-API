@@ -9,6 +9,19 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class ChatScreen extends Application {
+
+    public ChatScreen() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/ChatScreenGUI/chat-screen.fxml")); // Please adjust the path to your .fxml file accordingly.
+        Parent root = (Parent) fxmlLoader.load();
+        Stage stage = new Stage();
+        stage.setScene(new Scene(root));
+        stage.show();
+        System.out.println("Chat Screen Config");
+        ChatScreenController controller = fxmlLoader.getController();
+        controller.initialConfig();
+    }
+
+
     public void launchApp(String[] args) {
         launch(args);
     }
