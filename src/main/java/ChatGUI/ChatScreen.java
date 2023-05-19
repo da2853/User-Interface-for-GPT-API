@@ -2,6 +2,7 @@ package ChatGUI;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -13,15 +14,12 @@ public class ChatScreen extends Application {
     }
     @Override
     public void start(Stage primaryStage) throws IOException {
+        // The path is relative to the classpath
+        Parent root = FXMLLoader.load(getClass().getResource("/ChatScreenGUI/chat-screen.fxml"));
 
-        FXMLLoader fxmlLoader = new FXMLLoader(ChatScreen.class.getResource("chat-screen.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 400, 600);
-//        stage.setTitle("GPT User Interface - NYU Engineering 2023");
-//        stage.setScene(scene);
-//        MainScreenController controller = fxmlLoader.getController();
-//        controller.setStage(stage);
-//        stage.show();
-
+        Scene scene = new Scene(root);
+        primaryStage.setTitle("GPT User Interface - NYU Engineering 2023");
+        primaryStage.setScene(scene);
+        primaryStage.show();
     }
-
 }

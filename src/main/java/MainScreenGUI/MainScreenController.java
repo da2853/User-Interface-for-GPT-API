@@ -27,7 +27,7 @@ public class MainScreenController {
     }
     @FXML
     private void handleChatButtonAction(ActionEvent event) {
-        new ChatScreen().launchApp(javafxInstance.arg);
+        new ChatScreen().launchApp(new String[5]);
         stage.hide();
     }
 
