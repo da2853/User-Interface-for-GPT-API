@@ -22,7 +22,7 @@ public class MainScreen extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(MainScreen.class.getResource("main-screen.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 400, 600);
+        Scene scene = new Scene(fxmlLoader.load(), 350, 500);
         stage.setTitle("GPT User Interface - NYU Engineering 2023");
         stage.setScene(scene);
         MainScreenController controller = fxmlLoader.getController();

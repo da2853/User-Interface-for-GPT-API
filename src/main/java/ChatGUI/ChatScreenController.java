@@ -16,10 +16,12 @@ public class ChatScreenController {
     public Button sendButton;
     public TextArea userText;
     @FXML
-    private TextArea chatArea;
+    public TextArea chatArea;
 
-    public void initialConfig(){
-        chatArea.appendText("Enter a Prompt for ChatGPT.");
+    public ChatConnection chat;
+
+    public void initialConfig(ChatConnection con){
+        chat = con;
         userText.focusedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -36,6 +38,9 @@ public class ChatScreenController {
                 }
             }
         });
+    }
+    public void addToDisplay(String message) {
+        chatArea.appendText(message);
     }
 
     public void changeMode(ActionEvent actionEvent) {
@@ -55,6 +60,10 @@ public class ChatScreenController {
     }
 
     public void sendMessage(ActionEvent actionEvent) {
-        // Your code here
+        String txt = userText.getText();
+        userText.setText("");
+        addToDisplay("User: " + txt + "\n");
+        addToDisplay((chat.sendToGPT(txt)) + "\n");
+
     }
 }

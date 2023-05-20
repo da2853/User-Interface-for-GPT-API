@@ -1,5 +1,6 @@
 package MainScreenGUI;
 
+import ChatGUI.ChatConnection;
 import ChatGUI.ChatScreen;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -10,8 +11,6 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class MainScreenController {
     private static final String OPENAI_KEY_PATTERN = "^(sk|rk)-[a-zA-Z0-9]{32}$";
@@ -39,25 +38,32 @@ public class MainScreenController {
     @FXML
     private void handleChatButtonAction(ActionEvent event) throws IOException {
 
-            if (checkKey(apiKey)){
-                new ChatScreen();
+        if (checkKey(apiKey.getText())) {
+            ChatConnection chat = new ChatConnection();
+            String[] connect = chat.initialize(apiKey.getText());
+            if (Objects.equals(connect[0], "0")) {
+                statusText.setText("Connection Established");
+                new ChatScreen(connect[1], chat);
             }
-
+            else if (Objects.equals(connect[0], "1")){
+                statusText.setText(connect[1] + "\n");
+            }
         }
+    }
 
 
-    private boolean checkKey(PasswordField apiKey) {
-        String key = apiKey.getText();
+    private boolean checkKey(String key) {
         if (Objects.equals(key, "test")){
             return true;
         }
-        Pattern pattern = Pattern.compile(OPENAI_KEY_PATTERN);
-        Matcher matcher = pattern.matcher(key);
 
-        if (!matcher.matches()) {
-            statusText.setText("Status: Invalid OpenAI key format.");
-            return false;
-        }
+//        Pattern pattern = Pattern.compile(OPENAI_KEY_PATTERN);
+//        Matcher matcher = pattern.matcher(key);
+//
+//        if (!matcher.matches()) {
+//            statusText.setText("Status: Invalid OpenAI key format.");
+//            return false;
+//        }
         return true;
     }
 

@@ -10,7 +10,8 @@ import java.io.IOException;
 
 public class ChatScreen extends Application {
 
-    public ChatScreen() throws IOException {
+
+    public ChatScreen(String mess, ChatConnection chat) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/ChatScreenGUI/chat-screen.fxml")); // Please adjust the path to your .fxml file accordingly.
         Parent root = (Parent) fxmlLoader.load();
         Stage stage = new Stage();
@@ -18,7 +19,8 @@ public class ChatScreen extends Application {
         stage.show();
         System.out.println("Chat Screen Config");
         ChatScreenController controller = fxmlLoader.getController();
-        controller.initialConfig();
+        controller.initialConfig(chat);
+        controller.addToDisplay("GPT: " + mess);
     }
 
 
@@ -27,7 +29,6 @@ public class ChatScreen extends Application {
     }
     @Override
     public void start(Stage primaryStage) throws IOException {
-        // The path is relative to the classpath
         Parent root = FXMLLoader.load(getClass().getResource("/ChatScreenGUI/chat-screen.fxml"));
 
         Scene scene = new Scene(root);

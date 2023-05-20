@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.collections.FXCollections?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -22,6 +21,10 @@
                             <String fx:value="code-davinci-002" />
                         </FXCollections>
                     </items>
+                    <!-- Set the default value to "gpt-3.5-turbo" -->
+                    <value>
+                        <String fx:value="gpt-3.5-turbo" />
+                    </value>
                 </ComboBox>
             </buttons>
         </ButtonBar>
