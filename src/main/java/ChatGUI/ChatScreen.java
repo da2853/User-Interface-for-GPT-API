@@ -16,8 +16,8 @@ public class ChatScreen extends Application {
         Parent root = (Parent) fxmlLoader.load();
         Stage stage = new Stage();
         stage.setScene(new Scene(root));
+        stage.setTitle("Chat - NYU Engineering 2023");
         stage.show();
-        System.out.println("Chat Screen Config");
         ChatScreenController controller = fxmlLoader.getController();
         controller.initialConfig(chat);
         controller.addToDisplay("GPT: " + mess);

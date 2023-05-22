@@ -8,12 +8,13 @@ import java.io.IOException;
 
 public class ChatConnection {
     private static final String API_URL = "https://api.openai.com/v1/chat/completions";
-    private static final String MODEL = "gpt-3.5-turbo";
-    private static final String ROLE_SYSTEM = "system";
-    private static final String ROLE_USER = "user";
-    private static final String ROLE_ASSISTANT = "assistant";
-    private static final String PROMPT = "You are a helpful assistant.";
-
+    private static String MODEL = "gpt-3.5-turbo";
+    private static String ROLE_SYSTEM = "system";
+    private static String ROLE_USER = "user";
+    private static String ROLE_ASSISTANT = "assistant";
+    private static String PROMPT = "You are a helpful assistant.";
+    private String lastUserMessage;
+    private String lastAssistantMessage;
     private OkHttpClient client;
     private String apiKey;
     private StringBuilder allMessages = new StringBuilder();
@@ -29,11 +30,12 @@ public class ChatConnection {
     public String[] initialize(String key) {
         this.apiKey = key;
         this.client = new OkHttpClient();
-        return sendPost("");
+        return sendPost();
     }
 
-    public String sendToGPT(String message){
-        return sendPost(message)[1];
+    public String sendToGPT(String message) {
+        lastUserMessage = message;
+        return sendPost()[1];
     }
     private String[] sendPost() {
         StringBuilder messagesToSend = new StringBuilder();

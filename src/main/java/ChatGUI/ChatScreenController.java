@@ -14,6 +14,7 @@ public class ChatScreenController {
     public Button downloadButton;
     public ComboBox modelButton;
     public Button sendButton;
+    @FXML
     public TextArea userText;
     @FXML
     public TextArea chatArea;
@@ -39,6 +40,7 @@ public class ChatScreenController {
             }
         });
     }
+
     public void addToDisplay(String message) {
         chatArea.appendText(message);
     }
@@ -63,7 +65,13 @@ public class ChatScreenController {
         String txt = userText.getText();
         userText.setText("");
         addToDisplay("User: " + txt + "\n");
-        addToDisplay((chat.sendToGPT(txt)) + "\n");
-
+        String responseText = chat.sendToGPT(txt);
+        String[] sentences = responseText.split("\\.");
+        for (String sentence : sentences) {
+            if (!sentence.isEmpty()) {
+                addToDisplay("GPT: " + sentence.trim() + ".\n");
+            }
+        }
+        userText.setText("Type here...");
     }
 }
