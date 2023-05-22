@@ -8,16 +8,25 @@ import java.io.IOException;
 
 public class ChatConnection {
     private static final String API_URL = "https://api.openai.com/v1/chat/completions";
-    private static String MODEL = "gpt-3.5-turbo";
-    private static String ROLE_SYSTEM = "system";
-    private static String ROLE_USER = "user";
-    private static String ROLE_ASSISTANT = "assistant";
-    private static String PROMPT = "You are a helpful assistant.";
+    protected String MODEL;
+    private String ROLE_SYSTEM;
+    private String ROLE_USER;
+    private String ROLE_ASSISTANT;
+    private String PROMPT;
     private String lastUserMessage;
     private String lastAssistantMessage;
-    private OkHttpClient client;
-    private String apiKey;
+    private  String apiKey;
     private StringBuilder allMessages = new StringBuilder();
+
+    protected void defaultSettings(){
+        MODEL = "gpt-3.5-turbo";
+        ROLE_SYSTEM = "system";
+        ROLE_USER = "user";
+        ROLE_ASSISTANT = "assistant";
+        PROMPT = "You are a helpful assistant.";
+        lastUserMessage = null;
+        lastAssistantMessage = null;
+    }
 
     public String formatMessage(String role, String content) {
         return String.format("{\"role\": \"%s\", \"content\": \"%s\"}", role, content);
@@ -28,6 +37,7 @@ public class ChatConnection {
     }
 
     public String[] initialize(String key) {
+        defaultSettings();
         this.apiKey = key;
         this.client = new OkHttpClient();
         return sendPost();

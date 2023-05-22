@@ -45,12 +45,9 @@ public class ChatScreenController {
         chatArea.appendText(message);
     }
 
-    public void changeMode(ActionEvent actionEvent) {
-        // Your code here
-    }
-
     public void resetChat(ActionEvent actionEvent) {
-        // Your code here
+        chat.defaultSettings();
+        addToDisplay("System: Chat Settings Have Been Reset to Default.");
     }
 
     public void downloadChat(ActionEvent actionEvent) {
@@ -58,12 +55,13 @@ public class ChatScreenController {
     }
 
     public void changeModel(ActionEvent actionEvent) {
-        // Your code here
+        chat.MODEL = (String) modelButton.getValue();
+
     }
 
     public void sendMessage(ActionEvent actionEvent) {
         String txt = userText.getText();
-        userText.setText("");
+        userText.setText("Waiting for Response...");
         addToDisplay("User: " + txt + "\n");
         String responseText = chat.sendToGPT(txt);
         String[] sentences = responseText.split("\\.");
