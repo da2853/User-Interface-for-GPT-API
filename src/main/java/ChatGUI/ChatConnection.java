@@ -16,11 +16,14 @@ public class ChatConnection {
 
     private OkHttpClient client;
     private String apiKey;
-    private String json;
     private StringBuilder allMessages = new StringBuilder();
 
-    public String formatString(String role, String content){
-        return String.format("{\"role\": \"%s\", \"content\":  \"%s\"}", role, content);
+    public String formatMessage(String role, String content) {
+        return String.format("{\"role\": \"%s\", \"content\": \"%s\"}", role, content);
+    }
+
+    public String formatRequestBody(String model, String messages) {
+        return String.format("{\"model\": \"%s\", \"messages\": [%s]}", model, messages);
     }
 
     public String[] initialize(String key) {
@@ -32,17 +35,29 @@ public class ChatConnection {
     public String sendToGPT(String message){
         return sendPost(message)[1];
     }
+    private String[] sendPost() {
+        StringBuilder messagesToSend = new StringBuilder();
 
-    private String[] sendPost(String cont) {
-        if (allMessages.toString().isEmpty()) {
-            allMessages.append(formatString(ROLE_SYSTEM, PROMPT));
-            json = formatString(MODEL, allMessages.toString());
-            System.out.println("JSON: " + json);
-        } else if (!cont.isEmpty()) {
-            allMessages.append(",").append(formatString(ROLE_USER, cont));
-            json = formatString(MODEL, allMessages.toString());
-            System.out.print("JSON: " + json);
+        if (lastUserMessage == null && lastAssistantMessage == null) {
+            messagesToSend.append(formatMessage(ROLE_SYSTEM, PROMPT));
+        } else {
+            if (lastAssistantMessage != null) {
+                if (messagesToSend.length() > 0) {
+                    messagesToSend.append(",");
+                }
+                messagesToSend.append(formatMessage(ROLE_ASSISTANT, lastAssistantMessage));
+            }
+            if (lastUserMessage != null) {
+                if (messagesToSend.length() > 0) {
+                    messagesToSend.append(",");
+                }
+                messagesToSend.append(formatMessage(ROLE_USER, lastUserMessage));
+            }
+
         }
+
+        String json = formatRequestBody(MODEL, messagesToSend.toString());
+        System.out.println("JSON: " + json);
 
         RequestBody body = RequestBody.create(
                 MediaType.parse("application/json"), json);
@@ -64,10 +79,12 @@ public class ChatConnection {
             JSONObject choice = choices.getJSONObject(0);
             JSONObject message = choice.getJSONObject("message");
             String content = message.getString("content");
-            allMessages.append(",").append(formatString(ROLE_ASSISTANT, content));
+
+            lastAssistantMessage = content;
+
             return new String[]{"0", content + '\n'};
         } catch (IOException e) {
-            return new String[]{"1","An IOException Has Occurred: " + e.getMessage()};
+            return new String[]{"1", "An IOException Has Occurred: " + e.getMessage()};
         }
     }
 }
