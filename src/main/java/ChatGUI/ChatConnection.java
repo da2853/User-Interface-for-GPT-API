@@ -17,7 +17,6 @@ public class ChatConnection {
     private String lastUserMessage;
     private String lastAssistantMessage;
     private  String apiKey;
-    private StringBuilder allMessages = new StringBuilder();
 
     protected void defaultSettings(){
         MODEL = "gpt-3.5-turbo";
@@ -58,7 +57,6 @@ public class ChatConnection {
         return response[1];
     }
 
-
     private String[] sendPost() {
         StringBuilder messagesToSend = new StringBuilder();
 
@@ -77,7 +75,6 @@ public class ChatConnection {
                 }
                 messagesToSend.append(formatMessage(ROLE_USER, lastUserMessage));
             }
-
         }
 
         String json = formatRequestBody(MODEL, messagesToSend.toString());
@@ -110,11 +107,34 @@ public class ChatConnection {
             JSONObject message = choice.getJSONObject("message");
             String content = message.getString("content");
 
+            // Check if the assistant's message exceeds the token limit
+            if (content.split(" ").length > 4096) {
+                // Truncate the assistant's message to fit the token limit
+                content = truncateMessage(content, 4096);
+            }
+
             lastAssistantMessage = content;
 
             return new String[]{"0", content + '\n'};
         } catch (IOException e) {
             return new String[]{"1", "An IOException Has Occurred: " + e.getMessage()};
         }
+    }
+
+    private String truncateMessage(String message, int maxLength) {
+        String[] tokens = message.split(" ");
+        StringBuilder truncatedMessage = new StringBuilder();
+        int count = 0;
+
+        for (String token : tokens) {
+            if (count + token.length() > maxLength) {
+                break;
+            }
+
+            truncatedMessage.append(token).append(" ");
+            count += token.length() + 1;
+        }
+
+        return truncatedMessage.toString().trim();
     }
 }
