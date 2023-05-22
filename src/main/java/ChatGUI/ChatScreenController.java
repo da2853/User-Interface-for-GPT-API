@@ -64,12 +64,21 @@ public class ChatScreenController {
         userText.setText("Waiting for Response...");
         addToDisplay("User: " + txt + "\n");
         String responseText = chat.sendToGPT(txt);
-        String[] sentences = responseText.split("\\.");
+        String[] sentences = responseText.split("[?!.]");
         for (String sentence : sentences) {
-            if (!sentence.isEmpty()) {
+            if (!sentence.isEmpty() && sentence.trim().length() > 50) {
                 addToDisplay("GPT: " + sentence.trim() + ".\n");
             }
         }
         userText.setText("Type here...");
+    }
+
+
+    public void openSettings(ActionEvent actionEvent) {
+        new ChatSettings();
+    }
+
+    public void clearChat(ActionEvent actionEvent) {
+        chatArea.clear();
     }
 }

@@ -5,6 +5,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 public class ChatConnection {
     private static final String API_URL = "https://api.openai.com/v1/chat/completions";
@@ -39,14 +40,25 @@ public class ChatConnection {
     public String[] initialize(String key) {
         defaultSettings();
         this.apiKey = key;
-        this.client = new OkHttpClient();
         return sendPost();
     }
 
     public String sendToGPT(String message) {
+        // Check if the new message exceeds the token limit
+        if (message.split(" ").length > 4096) {
+            return "Your message is too long. Please shrink it and try again.";
+        }
+
         lastUserMessage = message;
-        return sendPost()[1];
+        String[] response = sendPost();
+        if (response[0].equals("1")) {
+            return response[1];
+        }
+
+        return response[1];
     }
+
+
     private String[] sendPost() {
         StringBuilder messagesToSend = new StringBuilder();
 
@@ -70,6 +82,12 @@ public class ChatConnection {
 
         String json = formatRequestBody(MODEL, messagesToSend.toString());
         System.out.println("JSON: " + json);
+
+        OkHttpClient client = new OkHttpClient.Builder()
+                .connectTimeout(60, TimeUnit.SECONDS)
+                .writeTimeout(60, TimeUnit.SECONDS)
+                .readTimeout(60, TimeUnit.SECONDS)
+                .build();
 
         RequestBody body = RequestBody.create(
                 MediaType.parse("application/json"), json);
