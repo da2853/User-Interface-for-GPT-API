@@ -26,6 +26,7 @@ public class MainScreen extends Application {
         stage.setTitle("GPT User Interface - NYU Engineering 2023");
         stage.setScene(scene);
         MainScreenController controller = fxmlLoader.getController();
+        stage.setResizable(false);
         controller.setStage(stage);
         stage.show();
 

@@ -17,6 +17,7 @@ public class ChatScreen extends Application {
         Stage stage = new Stage();
         stage.setScene(new Scene(root));
         stage.setTitle("Chat - NYU Engineering 2023");
+        stage.setResizable(false);
         stage.show();
         ChatScreenController controller = fxmlLoader.getController();
         controller.initialConfig(chat);

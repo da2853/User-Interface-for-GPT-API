@@ -7,6 +7,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
+import javafx.stage.FileChooser;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class ChatScreenController {
     public Button ModeButton;
@@ -27,7 +33,7 @@ public class ChatScreenController {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 if (newValue) {
-                    // When focus is gained
+
                     if (userText.getText().equals("Type here...")) {
                         userText.setText("");
                     }
@@ -41,18 +47,12 @@ public class ChatScreenController {
         });
     }
 
-    public void addToDisplay(String message) {
-        chatArea.appendText(message);
-    }
-
     public void resetChat(ActionEvent actionEvent) {
         chat.defaultSettings();
         addToDisplay("System: Chat Settings Have Been Reset to Default.");
     }
 
-    public void downloadChat(ActionEvent actionEvent) {
-        // Your code here
-    }
+
 
     public void changeModel(ActionEvent actionEvent) {
         chat.MODEL = (String) modelButton.getValue();
@@ -74,11 +74,37 @@ public class ChatScreenController {
     }
 
 
-    public void openSettings(ActionEvent actionEvent) {
+    public void openSettings(ActionEvent actionEvent) throws IOException {
         new ChatSettings();
+    }
+
+    private final StringBuilder chatHistory = new StringBuilder();
+
+    public void addToDisplay(String message) {
+        chatArea.appendText(message);
+        chatHistory.append(message);
+    }
+
+    public void downloadChat(ActionEvent actionEvent) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save Chat History");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
+        File file = fileChooser.showSaveDialog(null);
+
+        if (file != null) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+                writer.write(chatHistory.toString());
+                addToDisplay("System: Chat history downloaded successfully.\n");
+            } catch (IOException e) {
+                addToDisplay("System: Failed to download chat history.\n");
+                e.printStackTrace();
+            }
+        }
     }
 
     public void clearChat(ActionEvent actionEvent) {
         chatArea.clear();
+        chatHistory.setLength(0);
     }
+
 }
