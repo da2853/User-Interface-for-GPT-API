@@ -18,7 +18,7 @@ public class ChatScreenController {
     public ComboBox<String> modelButton;
     public TextArea userText, chatArea;
     private ChatConnection chat;
-    private StringBuilder chatHistory = new StringBuilder();
+    private final StringBuilder chatHistory = new StringBuilder();
 
     public void initialConfig(ChatConnection con) {
         chat = con;
@@ -59,7 +59,7 @@ public class ChatScreenController {
 
     public void addToDisplay(String message) {
         chatArea.appendText(message + "\n");
-        chatHistory.append(message + "\n");
+        chatHistory.append(message).append("\n");
     }
 
     public void downloadChat(ActionEvent actionEvent) {
