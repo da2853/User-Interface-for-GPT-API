@@ -7,22 +7,21 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@../../MainScreenGUI/style.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
     <padding>
         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
     </padding>
     <children>
-        <TextArea fx:id="promptTextArea" prefHeight="200.0" prefWidth="200.0" promptText="Enter your prompt here..." />
-        <HBox spacing="10.0">
+        <ImageView fx:id="generatedImage" fitHeight="292.0" fitWidth="582.0" preserveRatio="true" />
+        <TextArea fx:id="promptTextArea" prefHeight="40.0" prefWidth="445.0" promptText="Enter your prompt here..." />
+        <HBox prefHeight="48.0" prefWidth="374.0" spacing="10.0">
             <padding>
                 <Insets top="10.0" />
             </padding>
             <children>
                 <Button fx:id="generateButton" mnemonicParsing="false" text="Generate Image" />
-                <Button fx:id="generateAgainButton" mnemonicParsing="false" text="Generate Again" />
                 <Button fx:id="saveImageButton" mnemonicParsing="false" text="Save Image" />
             </children>
         </HBox>
-        <ImageView fx:id="generatedImage" fitHeight="300" fitWidth="300" preserveRatio="true" />
     </children>
 </VBox>

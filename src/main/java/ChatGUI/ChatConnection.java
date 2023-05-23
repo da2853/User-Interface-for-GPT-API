@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ChatConnection {
     private static final String API_URL = "https://api.openai.com/v1/chat/completions";
-    private static final int MAX_MESSAGE_LENGTH = 4096;
+    private static final int MAX_MESSAGE_LENGTH = 4070;
     private static final int TIMEOUT = 60;
     private static final MediaType JSON = MediaType.parse("application/json");
 
@@ -51,6 +51,7 @@ public class ChatConnection {
             return "Your message is too long. Please shrink it and try again.";
         }
 
+
         lastUserMessage = message;
         String[] response = sendPost();
         if (response[0].equals("1")) {
@@ -59,15 +60,14 @@ public class ChatConnection {
 
         return response[1];
     }
-
     private String[] sendPost() {
         StringBuilder messagesToSend = new StringBuilder();
 
         if (lastUserMessage == null && lastAssistantMessage == null) {
             appendMessage(messagesToSend, ROLE_SYSTEM, PROMPT);
         } else {
-            appendMessage(messagesToSend, ROLE_ASSISTANT, lastAssistantMessage);
-            appendMessage(messagesToSend, ROLE_USER, lastUserMessage);
+            appendMessage(messagesToSend, ROLE_ASSISTANT, truncateMessage(lastAssistantMessage, MAX_MESSAGE_LENGTH));
+            appendMessage(messagesToSend, ROLE_USER, truncateMessage(lastUserMessage, MAX_MESSAGE_LENGTH));
         }
 
         String json = formatRequestBody(MODEL, messagesToSend.toString());
@@ -99,10 +99,6 @@ public class ChatConnection {
             JSONObject message = choice.getJSONObject("message");
             String content = message.getString("content");
 
-            if (content.split(" ").length > MAX_MESSAGE_LENGTH) {
-                content = truncateMessage(content, MAX_MESSAGE_LENGTH);
-            }
-
             lastAssistantMessage = content;
 
             return new String[]{"0", content + '\n'};
@@ -112,22 +108,14 @@ public class ChatConnection {
         }
     }
 
+
     private String truncateMessage(String message, int maxLength) {
-        String[] tokens = message.split(" ");
-        StringBuilder truncatedMessage = new StringBuilder();
-        int count = 0;
-
-        for (String token : tokens) {
-            if (count + token.length() > maxLength) {
-                break;
-            }
-
-            truncatedMessage.append(token).append(" ");
-            count += token.length() + 1;
+        if (message.length() <= maxLength) {
+            return message;
         }
-
-        return truncatedMessage.toString().trim();
+        return message.substring(message.length() - maxLength);
     }
+
 
     private void appendMessage(StringBuilder messages, String role, String message) {
         if (message != null) {

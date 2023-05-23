@@ -22,13 +22,6 @@ public class ChatScreenController {
 
     public void initialConfig(ChatConnection con) {
         chat = con;
-        userText.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue && userText.getText().equals("Type here...")) {
-                userText.setText("");
-            } else if (!newValue && userText.getText().isEmpty()) {
-                userText.setText("Type here...");
-            }
-        });
     }
 
     public void resetChat(ActionEvent actionEvent) {
@@ -46,7 +39,7 @@ public class ChatScreenController {
         addToDisplay("User: " + txt);
         String responseText = chat.sendToGPT(txt);
         Arrays.stream(responseText.split("[?!.]"))
-                .filter(sentence -> !sentence.trim().isEmpty() && sentence.trim().length() > 50)
+                .filter(sentence -> !sentence.trim().isEmpty() && sentence.trim().length() > 45)
                 .forEach(sentence -> addToDisplay("GPT: " + sentence.trim()));
         userText.setText("Type here...");
     }

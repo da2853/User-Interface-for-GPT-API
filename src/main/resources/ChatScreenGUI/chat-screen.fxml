@@ -35,7 +35,7 @@
         </ButtonBar>
         <!-- set editable to false -->
         <TextArea fx:id="chatArea" editable="false" layoutX="15.0" layoutY="67.0" prefHeight="437.0" prefWidth="773.0" />
-        <TextArea fx:id="userText" layoutX="15.0" layoutY="529.0" prefHeight="39.0" prefWidth="692.0" />
+        <TextArea fx:id="userText" layoutX="15.0" layoutY="529.0" prefHeight="39.0" prefWidth="692.0" promptText="Enter Text Here...." />
         <Button fx:id="sendButton" layoutX="715.0" layoutY="528.0" mnemonicParsing="false" onAction="#sendMessage" text="Send" />
     </children>
 </AnchorPane>
