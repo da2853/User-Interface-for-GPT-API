@@ -9,6 +9,10 @@ import java.util.concurrent.TimeUnit;
 
 public class ChatConnection {
     private static final String API_URL = "https://api.openai.com/v1/chat/completions";
+    private static final int MAX_MESSAGE_LENGTH = 4096;
+    private static final int TIMEOUT = 60;
+    private static final MediaType JSON = MediaType.parse("application/json");
+
     protected String MODEL;
     private String ROLE_SYSTEM;
     private String ROLE_USER;
@@ -16,7 +20,7 @@ public class ChatConnection {
     private String PROMPT;
     private String lastUserMessage;
     private String lastAssistantMessage;
-    private  String apiKey;
+    private String apiKey;
 
     protected void defaultSettings(){
         MODEL = "gpt-3.5-turbo";
@@ -43,8 +47,7 @@ public class ChatConnection {
     }
 
     public String sendToGPT(String message) {
-        // Check if the new message exceeds the token limit
-        if (message.split(" ").length > 4096) {
+        if (message.split(" ").length > MAX_MESSAGE_LENGTH) {
             return "Your message is too long. Please shrink it and try again.";
         }
 
@@ -61,33 +64,22 @@ public class ChatConnection {
         StringBuilder messagesToSend = new StringBuilder();
 
         if (lastUserMessage == null && lastAssistantMessage == null) {
-            messagesToSend.append(formatMessage(ROLE_SYSTEM, PROMPT));
+            appendMessage(messagesToSend, ROLE_SYSTEM, PROMPT);
         } else {
-            if (lastAssistantMessage != null) {
-                if (messagesToSend.length() > 0) {
-                    messagesToSend.append(",");
-                }
-                messagesToSend.append(formatMessage(ROLE_ASSISTANT, lastAssistantMessage));
-            }
-            if (lastUserMessage != null) {
-                if (messagesToSend.length() > 0) {
-                    messagesToSend.append(",");
-                }
-                messagesToSend.append(formatMessage(ROLE_USER, lastUserMessage));
-            }
+            appendMessage(messagesToSend, ROLE_ASSISTANT, lastAssistantMessage);
+            appendMessage(messagesToSend, ROLE_USER, lastUserMessage);
         }
 
         String json = formatRequestBody(MODEL, messagesToSend.toString());
         System.out.println("JSON: " + json);
 
         OkHttpClient client = new OkHttpClient.Builder()
-                .connectTimeout(60, TimeUnit.SECONDS)
-                .writeTimeout(60, TimeUnit.SECONDS)
-                .readTimeout(60, TimeUnit.SECONDS)
+                .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
+                .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
+                .readTimeout(TIMEOUT, TimeUnit.SECONDS)
                 .build();
 
-        RequestBody body = RequestBody.create(
-                MediaType.parse("application/json"), json);
+        RequestBody body = RequestBody.create(JSON, json);
 
         Request request = new Request.Builder()
                 .url(API_URL)
@@ -107,16 +99,15 @@ public class ChatConnection {
             JSONObject message = choice.getJSONObject("message");
             String content = message.getString("content");
 
-            // Check if the assistant's message exceeds the token limit
-            if (content.split(" ").length > 4096) {
-                // Truncate the assistant's message to fit the token limit
-                content = truncateMessage(content, 4096);
+            if (content.split(" ").length > MAX_MESSAGE_LENGTH) {
+                content = truncateMessage(content, MAX_MESSAGE_LENGTH);
             }
 
             lastAssistantMessage = content;
 
             return new String[]{"0", content + '\n'};
         } catch (IOException e) {
+            e.printStackTrace();
             return new String[]{"1", "An IOException Has Occurred: " + e.getMessage()};
         }
     }
@@ -136,5 +127,24 @@ public class ChatConnection {
         }
 
         return truncatedMessage.toString().trim();
+    }
+
+    private void appendMessage(StringBuilder messages, String role, String message) {
+        if (message != null) {
+            if (messages.length() > 0) {
+                messages.append(",");
+            }
+            messages.append(formatMessage(role, message));
+        }
+    }
+
+    public String[] getSettings() {
+        return new String[]{PROMPT, ROLE_ASSISTANT, ROLE_USER};
+    }
+
+    public void saveSettings(String prompt, String assistantRole, String userRole) {
+        this.PROMPT = prompt;
+        this.ROLE_ASSISTANT = assistantRole;
+        this.ROLE_USER = userRole;
     }
 }

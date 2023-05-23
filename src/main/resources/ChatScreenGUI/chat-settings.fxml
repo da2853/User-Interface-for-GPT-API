@@ -9,7 +9,6 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane prefHeight="300.0" prefWidth="400.0" stylesheets="@../MainScreenGUI/style.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ChatGUI.ChatSettingsController">
     <children>
         <GridPane layoutX="22.0" prefHeight="150.0" prefWidth="357.0">
@@ -23,8 +22,8 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
-                <TextField GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                <TextField prefHeight="35.0" prefWidth="179.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                <TextField fx:id="promptText" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <TextField fx:id="role1Text" prefHeight="35.0" prefWidth="179.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                 <Label alignment="CENTER" prefHeight="20.0" prefWidth="190.0" text="Prompt:" textFill="#fffbfb" wrapText="true" GridPane.rowIndex="1">
                     <font>
                         <Font size="14.0" />
@@ -53,25 +52,25 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
-                <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="190.0" text="Back" GridPane.rowIndex="2" onAction="#handleBackButtonAction" />
-                <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" prefHeight="40.0" prefWidth="182.0" text="Save" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="2" onAction="#handleSaveButtonAction" />
+                <Button mnemonicParsing="false" onAction="#handleBackButtonAction" prefHeight="40.0" prefWidth="190.0" text="Back" GridPane.rowIndex="2" />
+                <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#handleSaveButtonAction" prefHeight="40.0" prefWidth="182.0" text="Save" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                 <Label prefHeight="20.0" prefWidth="190.0" textFill="#fffbfb" wrapText="true">
                     <font>
                         <Font size="14.0" />
                     </font>
                 </Label>
-                <TextField prefHeight="35.0" prefWidth="166.0" GridPane.columnIndex="1" />
+                <TextField fx:id="role2Text" prefHeight="35.0" prefWidth="166.0" GridPane.columnIndex="1" />
                 <Label alignment="CENTER" prefHeight="20.0" prefWidth="190.0" text="Role2:" textFill="#fffbfb" wrapText="true">
                     <font>
                         <Font size="14.0" />
                     </font>
                 </Label>
-                <Label alignment="CENTER" prefHeight="20.0" prefWidth="190.0" text="Value TBD" textFill="#fffbfb" wrapText="true" GridPane.rowIndex="1">
-                    <font>
-                        <Font size="14.0" />
-                    </font>
-                </Label>
-                <TextField GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label alignment="CENTER" prefHeight="20.0" prefWidth="190.0" text="Status:" textFill="#fffbfb" wrapText="true" GridPane.rowIndex="1">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <TextField fx:id="statusText" prefHeight="35.0" prefWidth="166.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             </children>
         </GridPane>
     </children>

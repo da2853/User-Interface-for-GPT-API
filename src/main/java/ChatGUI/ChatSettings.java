@@ -9,18 +9,41 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class ChatSettings extends Application {
+    private static final String TITLE = "Chat - NYU Engineering 2023";
+    private static final String FXML_PATH = "/ChatScreenGUI/chat-settings.fxml";
+
+    private ChatConnection chat;
+    private ChatSettingsController controller;
+    private Stage stage;
+
     public static void main(String[] args) {
         launch(args);
     }
 
+    public void setChat(ChatConnection c){
+        this.chat = c;
+        if (this.controller != null) {
+            this.controller.init(stage, chat);
+        }
+    }
+
     @Override
-    public void start(Stage primaryStage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/ChatScreenGUI/chat-settings.fxml")); // Please adjust the path to your .fxml file accordingly.
-        Parent root = fxmlLoader.load();
-        primaryStage.setScene(new Scene(root));
-        primaryStage.setTitle("Chat - NYU Engineering 2023");
-        primaryStage.setResizable(false);
-        primaryStage.show();
-        ChatSettingsController controller = fxmlLoader.getController();
+    public void start(Stage primaryStage) {
+        this.stage = primaryStage;
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(FXML_PATH));
+            Parent root = fxmlLoader.load();
+            this.controller = fxmlLoader.getController();
+            if (this.chat != null) {
+                this.controller.init(stage, chat);
+            }
+            primaryStage.setScene(new Scene(root));
+            primaryStage.setTitle(TITLE);
+            primaryStage.setResizable(false);
+            primaryStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
     }
 }
