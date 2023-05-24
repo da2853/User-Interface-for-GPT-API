@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ChatConnection {
     private static final String API_URL = "https://api.openai.com/v1/chat/completions";
-    private static final int MAX_MESSAGE_LENGTH = 4070;
+    private static final int MAX_MESSAGE_LENGTH = 4000;
     private static final int TIMEOUT = 60;
     private static final MediaType JSON = MediaType.parse("application/json");
 
@@ -33,8 +33,12 @@ public class ChatConnection {
     }
 
     public String formatMessage(String role, String content) {
-        return String.format("{\"role\": \"%s\", \"content\": \"%s\"}", role, content);
+        JSONObject json = new JSONObject();
+        json.put("role", role);
+        json.put("content", content);
+        return json.toString();
     }
+
 
     public String formatRequestBody(String model, String messages) {
         return String.format("{\"model\": \"%s\", \"messages\": [%s]}", model, messages);
@@ -47,10 +51,9 @@ public class ChatConnection {
     }
 
     public String sendToGPT(String message) {
-        if (message.split(" ").length > MAX_MESSAGE_LENGTH) {
+        if (message.length() > MAX_MESSAGE_LENGTH) {
             return "Your message is too long. Please shrink it and try again.";
         }
-
 
         lastUserMessage = message;
         String[] response = sendPost();
@@ -60,6 +63,7 @@ public class ChatConnection {
 
         return response[1];
     }
+
     private String[] sendPost() {
         StringBuilder messagesToSend = new StringBuilder();
 
@@ -71,7 +75,6 @@ public class ChatConnection {
         }
 
         String json = formatRequestBody(MODEL, messagesToSend.toString());
-        System.out.println("JSON: " + json);
 
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
@@ -90,7 +93,8 @@ public class ChatConnection {
 
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful())
-                return new String[]{"1", ("Unexpected code " + response)};
+                return new String[]{"1", ("Unexpected code " + response.code())};
+
 
             assert response.body() != null;
             JSONObject jsonResponse = new JSONObject(response.body().string());
@@ -108,13 +112,25 @@ public class ChatConnection {
         }
     }
 
-
     private String truncateMessage(String message, int maxLength) {
-        if (message.length() <= maxLength) {
+        int approxTokenLimit = maxLength / 5;  // 5 is an average length of an English word.
+        String[] words = message.split(" ");
+
+        if (words.length <= approxTokenLimit) {
             return message;
         }
-        return message.substring(message.length() - maxLength);
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = words.length - approxTokenLimit; i < words.length; i++) {
+            sb.append(words[i]);
+            if (i != words.length - 1) {
+                sb.append(" ");
+            }
+        }
+
+        return sb.toString();
     }
+
 
 
     private void appendMessage(StringBuilder messages, String role, String message) {

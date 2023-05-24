@@ -11,7 +11,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
 
 public class ChatScreenController {
     public Button ModeButton, resetButton, downloadButton, sendButton;
@@ -35,13 +34,24 @@ public class ChatScreenController {
 
     public void sendMessage(ActionEvent actionEvent) {
         String txt = userText.getText();
-        userText.setText("Waiting for Response...");
         addToDisplay("User: " + txt);
         String responseText = chat.sendToGPT(txt);
-        Arrays.stream(responseText.split("[?!.]"))
-                .filter(sentence -> !sentence.trim().isEmpty() && sentence.trim().length() > 45)
-                .forEach(sentence -> addToDisplay("GPT: " + sentence.trim()));
-        userText.setText("Type here...");
+
+        // Remove extra spaces
+        responseText = responseText.replaceAll("\\s+", " ").trim();
+
+        if (responseText.matches("(\\d+\\..*,)+\\d+\\..*")) {
+            addToDisplay("GPT: " + responseText.trim());
+        } else {
+            String[] sentences = responseText.split("(?<=[?!.])(?!\\d)\\s+(?=\\p{Lu})");
+
+            for (String sentence : sentences) {
+                String trimmedSentence = sentence.trim();
+                if (!trimmedSentence.isEmpty() && trimmedSentence.length() > 45) {
+                    addToDisplay("GPT: " + trimmedSentence);
+                }
+            }
+        }
     }
 
     public void openSettings(ActionEvent actionEvent) throws IOException {
